@@ -25,6 +25,7 @@ class TestAddGroup(unittest.TestCase):
     def open_groups_page(self, wd):
         wd.find_element_by_link_text("groups").click()
 
+
     def create_group(self, wd, group):
         # init group creation
         wd.find_element_by_name("new").click()
