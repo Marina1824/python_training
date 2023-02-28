@@ -16,6 +16,11 @@ class ContactHelper:
         wd = self.app.wd
         self.open_new_contact()
         # fill group creation
+        self.fill_contact_form(contact)
+        wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
+
+    def fill_contact_form(self, contact):
+        wd = self.app.wd
         wd.find_element_by_name("firstname").click()
         wd.find_element_by_name("firstname").clear()
         wd.find_element_by_name("firstname").send_keys(contact.firstname)
@@ -85,7 +90,6 @@ class ContactHelper:
         wd.find_element_by_name("notes").click()
         wd.find_element_by_name("notes").clear()
         wd.find_element_by_name("notes").send_keys(contact.notes)
-        wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
 
 
     def edit_first_contact(self, contact):
@@ -95,16 +99,12 @@ class ContactHelper:
         wd.find_element_by_name("selected[]").click()
         #edit
         wd.find_element_by_xpath("//img[@alt='Edit']").click()
-        wd.find_element_by_name("firstname").click()
-        wd.find_element_by_name("firstname").clear()
-        wd.find_element_by_name("firstname").send_keys(contact.firstname)
-        wd.find_element_by_name("middlename").click()
-        wd.find_element_by_name("middlename").clear()
-        wd.find_element_by_name("middlename").send_keys(contact.middlename)
+        self.fill_contact_form(contact)
         # submit group creation
         wd.find_element_by_name("update").click()
     def delete_first_contact(self):
         wd = self.app.wd
+        self.open_home()
         # select first group
         wd.find_element_by_name("selected[]").click()
         # submit deletion
