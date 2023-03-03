@@ -6,7 +6,8 @@ class ContactHelper:
 
     def open_home(self):
         wd = self.app.wd
-        wd.find_element_by_link_text("home").click()
+        if not (wd.current_url.endswith("localhost/addressbook/")):
+            wd.find_element_by_link_text("home").click()
 
     def change_select_value(self,field_name,text):
         wd = self.app.wd
