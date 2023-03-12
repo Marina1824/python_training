@@ -62,6 +62,7 @@ class ContactHelper:
         # submit group creation
         wd.find_element_by_name("update").click()
         self.open_home()
+        self.contact_cache = None
 
     def create(self, contact):
         wd = self.app.wd
@@ -71,6 +72,7 @@ class ContactHelper:
         self.fill_contact_form(contact)
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
         self.open_home()
+        self.contact_cache = None
 
     def delete_first_contact(self):
         wd = self.app.wd
@@ -81,6 +83,7 @@ class ContactHelper:
         wd.switch_to.alert.accept()
         WebDriverWait(wd, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.msgbox")))
         self.open_home()
+        self.contact_cache = None
 
     def select_first_contact(self):
         wd = self.app.wd
@@ -91,13 +94,16 @@ class ContactHelper:
         self.open_home()
         return len(wd.find_elements_by_name("selected[]"))
 
+    contact_cache = None
+
     def get_contact_list(self):
-        wd = self.app.wd
-        self.open_home()
-        contacts = []
-        for element in wd.find_elements_by_xpath("//tr[@name='entry']"):
-            tds = element.find_elements(By.TAG_NAME, "td")
-            lastname = tds[1].text
-            id = element.find_element_by_name("selected[]").get_attribute("value")
-            contacts.append(Contact(lastname=lastname, id=id))
-        return contacts
+        if self.contact_cache is None:
+            wd = self.app.wd
+            self.open_home()
+            self.contact_cache = []
+            for element in wd.find_elements_by_xpath("//tr[@name='entry']"):
+                tds = element.find_elements(By.TAG_NAME, "td")
+                lastname = tds[1].text
+                id = element.find_element_by_name("selected[]").get_attribute("value")
+                self.contact_cache.append(Contact(lastname=lastname, id=id))
+        return list(self.contact_cache)
