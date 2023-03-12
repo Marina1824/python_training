@@ -1,4 +1,8 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from model.contact import Contact
 class ContactHelper:
 
     def __init__(self, app):
@@ -75,6 +79,8 @@ class ContactHelper:
         # submit deletion
         wd.find_element_by_xpath("//input[@value='Delete']").click()
         wd.switch_to.alert.accept()
+        WebDriverWait(wd, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.msgbox")))
+        self.open_home()
 
     def select_first_contact(self):
         wd = self.app.wd
@@ -84,3 +90,14 @@ class ContactHelper:
         wd = self.app.wd
         self.open_home()
         return len(wd.find_elements_by_name("selected[]"))
+
+    def get_contact_list(self):
+        wd = self.app.wd
+        self.open_home()
+        contacts = []
+        for element in wd.find_elements_by_xpath("//tr[@name='entry']"):
+            tds = element.find_elements(By.TAG_NAME, "td")
+            lastname = tds[1].text
+            id = element.find_element_by_name("selected[]").get_attribute("value")
+            contacts.append(Contact(lastname=lastname, id=id))
+        return contacts
