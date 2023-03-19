@@ -163,6 +163,7 @@ class ContactHelper:
         self.open_contact_view_by_index(index)
         content =wd.find_element_by_id("content")
         text = content.text
+        fullname = content.find_element(By.TAG_NAME, "b").text
         home = re.search("H: (.*)", text).group(1)
         work = re.search("W: (.*)", text).group(1)
         mobile = re.search("M: (.*)", text).group(1)
@@ -171,7 +172,7 @@ class ContactHelper:
         email2 = content.find_elements(By.TAG_NAME, "a")[2].text
         email3 = content.find_elements(By.TAG_NAME, "a")[3].text
         print(email, email2, email3)
-        return Contact(home=home, work=work, mobile=mobile,
+        return Contact(fullname=fullname, home=home, work=work, mobile=mobile,
                        phone2=phone2, email=email, email2=email2, email3=email3)
 
 
