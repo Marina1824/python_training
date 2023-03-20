@@ -7,12 +7,15 @@ import string
 
 
 def random_string(prefix, maxlen):
-    symbols = string.ascii_letters +string.digits + " "*10
-    return prefix + "".join([random.choice(symbols) for i in range(random.randrange(maxlen))])
+    symbols = string.ascii_letters + string.digits + " " * 10
+    return clear(prefix + "".join([random.choice(symbols) for i in range(random.randrange(maxlen))]))
 
 def random_numbers(prefix, maxlen):
     number = string.digits *10
     return prefix + "".join([random.choice(number) for i in range(random.randrange(maxlen))])
+
+def clear(s):
+    return " ".join(s.split()) if s is not None else None
 
 testdata = [Contact(firstname="", middlename="", lastname="",
                       nickname="", title="", company="", address="",
