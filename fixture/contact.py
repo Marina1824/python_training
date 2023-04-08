@@ -175,4 +175,14 @@ class ContactHelper:
         return Contact(fullname=fullname, home=home, work=work, mobile=mobile,
                        phone2=phone2, email=email, email2=email2, email3=email3)
 
-
+    contact_cache = None
+    def get_group_list(self):
+        if self.group_cache is None:
+            wd = self.app.wd
+            self.open_home()
+            self.contact_cache = []
+            for element in wd.find_elements_by_css_selector("span.contact"):
+                text = element.text
+                id = element.find_element_by_name("selected[]").get_attribute("value")
+                self.contact_cache.append(Contact(lastname=text, firstname=text, id=id))
+        return list(self.contact_cache)
