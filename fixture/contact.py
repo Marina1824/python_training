@@ -24,7 +24,7 @@ class ContactHelper:
         if not (wd.current_url.endswith("/addressbook/")):
             wd.find_element_by_link_text("home").click()
 
-    def change_select_value(self,field_name,text):
+    def change_select_value(self, field_name, text):
         wd = self.app.wd
         if text is not None:
             Select(wd.find_element_by_name(field_name)).select_by_visible_text(text)
@@ -59,6 +59,16 @@ class ContactHelper:
 
     def modify_first_contact(self):
         self.modify_contact_by_index(0)
+    def modify_contact_by_id(self, id, new_contact_data):
+        wd = self.app.wd
+        self.open_home()
+        #open modification form
+        wd.find_element_by_xpath("//a[@href='edit.php?id=%s']" % id).click()
+        self.fill_contact_form(new_contact_data)
+        # submit group creation
+        wd.find_element_by_name("update").click()
+        self.open_home()
+        self.contact_cache = None
 
     def modify_contact_by_index(self, index, new_contact_data):
         wd = self.app.wd
@@ -82,14 +92,27 @@ class ContactHelper:
         self.open_home()
         self.contact_cache = None
 
-    def select_contact_by_index(self,index):
+    def select_contact_by_index(self, index):
         wd = self.app.wd
         wd.find_elements_by_name("selected[]")[index].click()
+    def select_contact_by_id(self, id):
+        wd = self.app.wd
+        wd.find_element_by_css_selector("input[value='%s']" % id).click()
 
     def delete_first_contact(self):
         self.delete_contact_by_index(0)
 
-    def delete_contact_by_index(self,index):
+    def delete_contact_by_id(self, id):
+        wd = self.app.wd
+        self.open_home()
+        self.select_contact_by_id(id)
+        wd.find_element_by_xpath("//input[@value='Delete']").click()
+        wd.switch_to.alert.accept()
+        WebDriverWait(wd, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.msgbox")))
+        self.open_home()
+        self.contact_cache = None
+
+    def delete_contact_by_index(self, index):
         wd = self.app.wd
         self.open_home()
         self.select_contact_by_index(index)
@@ -103,6 +126,10 @@ class ContactHelper:
     def select_first_contact(self):
         wd = self.app.wd
         wd.find_element_by_name("selected[]").click()
+
+    #def return_to_contacts_page(self):
+        #wd = self.app.wd
+        #wd.find_element_by_link_text("home").click()
 
     def count(self):
         wd = self.app.wd
@@ -177,7 +204,7 @@ class ContactHelper:
 
     contact_cache = None
     def get_group_list(self):
-        if self.group_cache is None:
+        if self.contact_cache is None:
             wd = self.app.wd
             self.open_home()
             self.contact_cache = []
