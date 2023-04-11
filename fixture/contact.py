@@ -58,9 +58,18 @@ class ContactHelper:
         self.change_select_value("aday", contact.aday)
         self.change_select_value("amonth", contact.amonth)
         groups = wd.find_element_by_name("new_group").find_elements(By.TAG_NAME, "option")
-        index = randrange(len(groups))
-        group = groups[index]
-        group_id = group.get_attribute("value")
+        if contact.group == None:
+            index = randrange(len(groups))
+            group = groups[index]
+            group_id = group.get_attribute("value")
+        else:
+            group_id = contact.group
+            index = 0
+            for i in range(len(groups)):
+                gr = groups[i]
+                if gr.get_attribute("value") == group_id:
+                    index=i
+                    break
         self.change_select_value_by_index("new_group", index)
         self.change_field_value("ayear", contact.ayear)
         self.change_field_value("address2", contact.address2)
@@ -149,6 +158,10 @@ class ContactHelper:
     def count(self):
         wd = self.app.wd
         self.open_home()
+        return len(wd.find_elements_by_name("selected[]"))
+
+    def count_contacts_on_page(self):
+        wd = self.app.wd
         return len(wd.find_elements_by_name("selected[]"))
 
     def open_contact_to_edit_by_index(self, index):
