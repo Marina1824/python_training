@@ -58,11 +58,13 @@ class ContactHelper:
         self.change_select_value("aday", contact.aday)
         self.change_select_value("amonth", contact.amonth)
         groups = wd.find_element_by_name("new_group").find_elements(By.TAG_NAME, "option")
+        group_id = ""
         if contact.group == None:
             index = randrange(len(groups))
             group = groups[index]
             group_id = group.get_attribute("value")
-        else:
+            self.change_select_value_by_index("new_group", index)
+        elif contact.group != "":
             group_id = contact.group
             index = 0
             for i in range(len(groups)):
@@ -70,7 +72,8 @@ class ContactHelper:
                 if gr.get_attribute("value") == group_id:
                     index=i
                     break
-        self.change_select_value_by_index("new_group", index)
+            self.change_select_value_by_index("new_group", index)
+
         self.change_field_value("ayear", contact.ayear)
         self.change_field_value("address2", contact.address2)
         self.change_field_value("phone2", contact.phone2)
@@ -122,6 +125,10 @@ class ContactHelper:
     def select_random_group(self, id):
         wd = self.app.wd
         wd.find_element_by_css_selector("input[value='%s']" % id).click()
+
+    def select_all_group_in_contact(self):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]").click()
 
     def delete_first_contact(self):
         self.delete_contact_by_index(0)
