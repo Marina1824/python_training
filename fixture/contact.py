@@ -31,9 +31,18 @@ class ContactHelper:
         wd = self.app.wd
         if text is not None:
             Select(wd.find_element_by_name(field_name)).select_by_visible_text(text)
+
+
     def change_select_value_by_index(self, field_name, index):
         wd = self.app.wd
         Select(wd.find_element_by_name(field_name)).select_by_index(index)
+
+    def click_add_too(self):
+        wd=self.app.wd
+        wd.find_element_by_name("add").click()
+    def change_select_value_by_value(self, name, value):
+        wd = self.app.wd
+        Select(wd.find_element_by_name(name)).select_by_value(value)
 
     def fill_contact_form(self, contact):
         wd = self.app.wd
@@ -57,28 +66,10 @@ class ContactHelper:
         self.change_field_value("byear", contact.byear)
         self.change_select_value("aday", contact.aday)
         self.change_select_value("amonth", contact.amonth)
-        groups = wd.find_element_by_name("new_group").find_elements(By.TAG_NAME, "option")
-        group_id = ""
-        if contact.group == None:
-            index = randrange(len(groups))
-            group = groups[index]
-            group_id = group.get_attribute("value")
-            self.change_select_value_by_index("new_group", index)
-        elif contact.group != "":
-            group_id = contact.group
-            index = 0
-            for i in range(len(groups)):
-                gr = groups[i]
-                if gr.get_attribute("value") == group_id:
-                    index=i
-                    break
-            self.change_select_value_by_index("new_group", index)
-
         self.change_field_value("ayear", contact.ayear)
         self.change_field_value("address2", contact.address2)
         self.change_field_value("phone2", contact.phone2)
         self.change_field_value("notes", contact.notes)
-        return group_id
 
     def modify_contact_by_id(self, id, new_contact_data):
         wd = self.app.wd
@@ -108,11 +99,10 @@ class ContactHelper:
         self.open_home()
         wd.find_element_by_link_text("add new").click()
         # fill group creation
-        group_id = self.fill_contact_form(contact)
+        self.fill_contact_form(contact)
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
         self.open_home()
         self.contact_cache = None
-        return group_id
 
     def select_contact_by_index(self, index):
         wd = self.app.wd
@@ -239,12 +229,11 @@ class ContactHelper:
     contact_cache = None
 
     def get_group_list(self):
-        if self.contact_cache is None:
-            wd = self.app.wd
-            self.open_home()
-            self.contact_cache = []
-            for element in wd.find_elements_by_css_selector("span.contact"):
-                text = element.text
-                id = element.find_element_by_name("selected[]").get_attribute("value")
-                self.contact_cache.append(Contact(lastname=text, firstname=text, id=id))
-        return list(self.contact_cache)
+        group_list=[]
+        wd = self.app.wd
+        select = wd.find_element_by_name("to_group")
+        for element in select.find_elements(By.TAG_NAME, "option"):
+            id = element.get_attribute("value")
+            group_list.append(id)
+        return list(group_list)
+

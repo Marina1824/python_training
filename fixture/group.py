@@ -11,8 +11,6 @@ class GroupHelper:
         if not (wd.current_url.endswith("/group.php") and len(wd.find_elements_by_name("new")) > 0):
             wd.find_element_by_link_text("groups").click()
 
-
-
     def change_field_value(self, field_name, text):
         wd = self.app.wd
         if text is not None:
@@ -24,8 +22,10 @@ class GroupHelper:
         self.change_field_value("group_name", group.name)
         self.change_field_value("group_header", group.header)
         self.change_field_value("group_footer", group.footer)
+
     def modify_first_group(self):
         self.delete_group_by_index(0)
+
     def modify_group_by_index(self, index, new_group_data):
         wd = self.app.wd
         self.open_groups_page()
